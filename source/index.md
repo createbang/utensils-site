@@ -1,168 +1,132 @@
 ---
 title: API Reference
 
-language_tabs:
-  - shell
-  - ruby
-  - python
-
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
+  - <a href='http://github.com/createbang/utensils'>Repository on GitHub</a>
+  - <a href='https://www.npmjs.org/package/utensils'>Package on NPM</a>
+  - <a href='/docs/utensils.html'>Annotated Source</a>
 
 search: true
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Utensils provides a rich set of design pattern abstractions for web application development.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+Most modern web applications perform similar types of operations, but there is a significant lack of structure for those operations in the JavaScript environment. This library is meant to provide a toolkit of opinionated, useful, and interoperable components to make common tasks in JavaScript web applications quick and easy.
 
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+# Installation
 
-# Authentication
+Utensils is available on npm as a package:
 
-> To authorize, use this code:
+$ `npm install utensils`
 
-```ruby
-require 'kittn'
+And on bower as a component:
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+$ `bower install utensils`
+
+# Value
+
+## extend
+
+```js
+var Grade = Utensils.Value.extend();
 ```
 
-```python
-import 'kittn'
+To create a Model class of your own, you extend Backbone.Model and provide instance properties, as well as optional classProperties to be attached directly to the constructor function.
 
-api = Kittn.authorize('meowmeowmeow')
+## argumentName
+
+```js
+var Grade = Utensils.Value.extend({
+  argumentName: 'percentage'
+});
+
+var grade = new Grade(0.7);
+grade.percentage; // 0.7
 ```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+The name of the value that represents the raw data for the object.  This value is used as the key for the value when it is stored on the instance of the object.
+
+Default | Type | Description
+----------- | ----------- | -----------
+`'value'` | `String` | Key for the object input
+
+## valueOf
+
+Returns the raw input.
+
+```js
+var Grade = Utensils.Value.extend();
+var grade = new Grade(0.7);
+grade.valueOf(); // 0.7
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+The method `valueOf()` has special meaning in JavaScript.  It is used for all comparisons except for equality/inequality, since equality is by reference and not by value in JavaScript.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+```js
+var grade1 = new Grade(0.7);
+var grade2 = new Grade(0.6);
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace `meowmeowmeow` with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+grade1 > grade2 // true
 ```
 
-```python
-import 'kittn'
+## isEqualTo
 
-api = Kittn.authorize('meowmeowmeow')
-api.kittens.get()
+Returns equality of values between two value objects.
+
+```js
+var grade1 = new Grade(0.6);
+var grade2 = new Grade(0.6);
+
+grade1.isEqualTo( grade2 ) // true
 ```
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+This method is also available as a property on the constructor for a more functional approach
+
+```js
+Grade.isEqualTo( grade1, grade2 ) // true
 ```
 
-> The above command returns JSON structured like this:
+## isNotEqualTo
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+Returns inequality of values between two value objects.
+
+```js
+var grade1 = new Grade(0.7);
+var grade2 = new Grade(0.6);
+
+grade1.isNotEqualTo( grade2 ) // true
 ```
 
-This endpoint retrieves all kittens.
+This method is also available as a property on the constructor for a more functional approach
 
-### HTTP Request
-
-`GET http://example.com/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
+```js
+Grade.isNotEqualTo( grade1, grade2 ) // true
 ```
 
-```python
-import 'kittn'
+# Service
 
-api = Kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
 
-```shell
-curl "http://example.com/api/kittens/3"
-  -H "Authorization: meowmeowmeow"
-```
 
-> The above command returns JSON structured like this:
+# Form
 
-```json
-{
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
 
-This endpoint retrieves a specific kitten.
 
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
+# Validator
 
-### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
 
-### URL Parameters
+# Query
 
-Parameter | Description
---------- | -----------
-ID | The ID of the cat to retrieve
 
+
+# Presenter
+
+
+
+# Policy
+
+
+
+# Decorator
